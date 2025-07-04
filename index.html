@@ -1,218 +1,70 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استمارة البيانات الشخصية</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #4285F4; /* لون أزرق مشابه لجوجل */
-            --light: #f8f9fa;
-            --dark: #202124;
-        }
-        
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 640px;
-            margin: 20px auto;
-            padding: 24px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-        }
-        
-        .header {
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #dadce0;
-        }
-        
-        .header h1 {
-            color: var(--dark);
-            margin-bottom: 8px;
-            font-size: 32px;
-            font-weight: 400;
-        }
-        
-        .form-group {
-            margin-bottom: 24px;
-            padding: 16px;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-        }
-        
-        .form-group.required label::after {
-            content: " *";
-            color: #d93025;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 14px;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 8px 0;
-            border: none;
-            border-bottom: 1px solid #dadce0;
-            font-size: 16px;
-            background: transparent;
-        }
-        
-        .form-control:focus {
-            border-bottom-color: var(--secondary);
-            outline: none;
-        }
-        
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-            border: 1px solid #dadce0;
-            padding: 8px;
-            border-radius: 4px;
-        }
-        
-        .btn-submit {
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 16px;
-            font-weight: 500;
-        }
-        
-        .btn-submit:hover {
-            background-color: #3367d6;
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-        }
-        
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            background-color: #e6f4ea;
-            color: #1e8e3e;
-            border-radius: 4px;
-            margin-top: 20px;
-            border: 1px solid #b6e6bd;
-        }
-        
-        .footer {
-            margin-top: 24px;
-            font-size: 12px;
-            color: #5f6368;
-            text-align: center;
-            border-top: 1px solid #dadce0;
-            padding-top: 16px;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Formulaire de commande</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Mode aperçu</h1>
-        </div>
-        
-        <form id="customForm">
-            <div class="form-group">
-                <label for="poids">Poids</label>
-                <input type="number" id="poids" class="form-control" step="0.1" placeholder="Votre réponse">
-            </div>
-            
-            <div class="form-group required">
-                <label for="nom">Nom complet</label>
-                <input type="text" id="nom" class="form-control" required placeholder="Votre réponse">
-            </div>
-            
-            <div class="form-group">
-                <label for="walo">Walo</label>
-                <input type="text" id="walo" class="form-control" placeholder="Votre réponse">
-            </div>
-            
-            <div class="form-group">
-                <label for="paragraphe">Paragraphe</label>
-                <textarea id="paragraphe" class="form-control" placeholder="Votre réponse"></textarea>
-            </div>
-            
-            <button type="submit" class="btn-submit">Envoyer</button>
-        </form>
-        
-        <div id="successMessage" class="success-message">
-            Votre réponse a été enregistrée avec succès.
-        </div>
-        
-        <div class="footer">
-            N'envoyez jamais de mots de passe via ce formulaire.<br>
-            Ce contenu n'est ni rédigé, ni cautionné par notre société.
-        </div>
-    </div>
+  <form action="https://docs.google.com/forms/d/e/1FAIpQLSd0WCxaEjcr9_lV91nyQifI854AtTclBz-U8cUPevdlL7T2dw/formResponse" method="POST" target="hidden_iframe" onsubmit="formSubmitted();">
+    <h2>Commande rapide</h2>
 
-    <script>
-        document.getElementById('customForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // جمع البيانات من النموذج
-            const formData = {
-                poids: document.getElementById('poids').value,
-                nom: document.getElementById('nom').value,
-                walo: document.getElementById('walo').value,
-                paragraphe: document.getElementById('paragraphe').value
-            };
-            
-            // إرسال البيانات إلى Google Forms بشكل خفي
-            const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd0WCxaEjcr9_lV91nyQifI854AtTclBz-U8cUPevdlL7T2dw/formResponse';
-            
-            // تحويل البيانات إلى تنسيق Google Forms
-            const params = new URLSearchParams();
-            params.append('entry.[ID_POIDS]', formData.poids); // استبدل بـ ID حقل الوزن
-            params.append('entry.[ID_NOM]', formData.nom); // استبدل بـ ID حقل الاسم
-            params.append('entry.[ID_WALO]', formData.walo); // استبدل بـ ID حقل Walo
-            params.append('entry.[ID_PARAGRAPHE]', formData.paragraphe); // استبدل بـ ID حقل الفقرة
-            
-            // إرسال البيانات
-            fetch(googleFormUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
-            })
-            .then(() => {
-                // إظهار رسالة النجاح
-                document.getElementById('customForm').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Une erreur s\'est produite lors de l\'envoi du formulaire. Veuillez réessayer.');
-            });
-        });
-    </script>
+    <label for="name">Nom complet:</label>
+    <input type="text" name="entry.1632283832" id="name" required>
+
+    <label for="weight">Poids (en kg):</label>
+    <input type="number" name="entry.1032501227" id="weight" required step="0.1">
+
+    <label for="date">Date de mesure:</label>
+    <input type="date" name="entry.989988914" id="date">
+
+    <label for="note">Remarques supplémentaires:</label>
+    <textarea name="entry.630107190" id="note"></textarea>
+
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+  <script>
+    function formSubmitted() {
+      alert("Votre commande a été envoyée avec succès !");
+    }
+  </script>
 </body>
 </html>
