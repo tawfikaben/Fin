@@ -52,6 +52,21 @@
             border-bottom: 2px solid #d4a762;
             text-align: center;
             padding: 1.5rem;
+            position: relative;
+        }
+        .logo-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 80px;
+            height: 80px;
+            z-index: 10;
+        }
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.8;
         }
         .date-display {
             color: #7a6b5e;
@@ -116,6 +131,48 @@
         .food-item-card {
             border: 1px solid #d4a762;
         }
+        .food-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .language-switcher {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        .language-btn {
+            background-color: #5a4a42;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -123,6 +180,19 @@
         <!-- Customer View -->
         <div id="customer-view">
             <header class="header-container shadow-md">
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button id="switch-lang" class="language-btn">
+                        <span class="lang-ar">العربية</span>
+                        <span class="lang-fr hidden">Français</span>
+                    </button>
+                </div>
+                
+                <!-- شعار المطعم الشفاف -->
+                <div class="logo-container">
+                    <img id="restaurant-logo" class="logo-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIj48dGV4dCB4PSIxMDAiIHk9IjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzVhNGE0MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+REFSIEhBU1NOQTwvdGV4dD48L3N2Zz4=" alt="DAR HASSNA Logo">
+                </div>
+                
                 <h1 class="main-title">DAR HASSNA</h1>
                 <div class="date-display">
                     <script>
@@ -132,7 +202,8 @@
                     </script>
                 </div>
                 <div class="menu-title">
-                    لائحة الطعام اليومية
+                    <span class="lang-fr">Menu du Jour</span>
+                    <span class="lang-ar hidden">قائمة الطعام اليومية</span>
                 </div>
             </header>
 
@@ -144,16 +215,24 @@
 
                 <!-- Order Summary -->
                 <div class="mt-8 bg-white p-4 rounded-lg shadow food-item-card">
-                    <h3 class="text-lg font-bold mb-2 text-[#5a4a42]">Votre Commande</h3>
+                    <h3 class="text-lg font-bold mb-2 text-[#5a4a42]">
+                        <span class="lang-fr">Votre Commande</span>
+                        <span class="lang-ar hidden">طلبك</span>
+                    </h3>
                     <div id="order-items" class="mb-3">
-                        <p class="text-gray-500">Votre panier est vide</p>
+                        <p class="text-gray-500 lang-fr">Votre panier est vide</p>
+                        <p class="text-gray-500 lang-ar hidden">سلة التسوق فارغة</p>
                     </div>
                     <div class="flex justify-between border-t border-[#d4a762] pt-2">
-                        <span class="font-bold text-[#5a4a42]">Total:</span>
+                        <span class="font-bold text-[#5a4a42]">
+                            <span class="lang-fr">Total:</span>
+                            <span class="lang-ar hidden">المجموع:</span>
+                        </span>
                         <span id="order-total" class="font-bold">0 DH</span>
                     </div>
                     <button id="submit-order" class="submit-order-btn w-full mt-4 text-white py-2 rounded hover:bg-[#6B3410]">
-                        Commander
+                        <span class="lang-fr">Commander</span>
+                        <span class="lang-ar hidden">اطلب الآن</span>
                     </button>
                 </div>
             </main>
@@ -162,16 +241,23 @@
         <!-- Admin Dashboard (Hidden by default) -->
         <div id="admin-dashboard" class="hidden">
             <header class="bg-white shadow-md p-4 flex justify-between items-center">
-                <h1 class="text-xl font-bold text-[#5a4a42]">Tableau de Bord</h1>
+                <h1 class="text-xl font-bold text-[#5a4a42]">
+                    <span class="lang-fr">Tableau de Bord</span>
+                    <span class="lang-ar hidden">لوحة التحكم</span>
+                </h1>
                 <button id="logout-btn" class="bg-red-500 text-white px-3 py-1 rounded">
-                    Déconnexion
+                    <span class="lang-fr">Déconnexion</span>
+                    <span class="lang-ar hidden">تسجيل خروج</span>
                 </button>
             </header>
 
             <div class="container mx-auto p-4">
                 <!-- Orders Section -->
                 <div class="mb-8">
-                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">Commandes en Cours</h2>
+                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">
+                        <span class="lang-fr">Commandes en Cours</span>
+                        <span class="lang-ar hidden">الطلبات الجارية</span>
+                    </h2>
                     <div id="orders-list" class="space-y-3">
                         <!-- Orders loaded dynamically -->
                     </div>
@@ -179,7 +265,10 @@
 
                 <!-- Menu Management -->
                 <div>
-                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">Gestion du Menu</h2>
+                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">
+                        <span class="lang-fr">Gestion du Menu</span>
+                        <span class="lang-ar hidden">إدارة القائمة</span>
+                    </h2>
                     <div id="menu-editor">
                         <!-- Menu editor loaded dynamically -->
                     </div>
@@ -190,12 +279,24 @@
         <!-- Table Number Modal -->
         <div id="table-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded-lg w-80 food-item-card">
-                <h3 class="text-lg font-bold mb-4 text-[#5a4a42]">Numéro de Table</h3>
+                <h3 class="text-lg font-bold mb-4 text-[#5a4a42]">
+                    <span class="lang-fr">Numéro de Table</span>
+                    <span class="lang-ar hidden">رقم الطاولة</span>
+                </h3>
                 <input type="number" id="table-number" class="w-full p-2 border border-[#d4a762] rounded mb-2" placeholder="Entrez le numéro de table" min="1">
-                <p id="table-error" class="text-red-500 text-sm mb-3 hidden">Veuillez entrer un numéro de table valide</p>
+                <p id="table-error" class="text-red-500 text-sm mb-3 hidden">
+                    <span class="lang-fr">Veuillez entrer un numéro de table valide</span>
+                    <span class="lang-ar hidden">الرجاء إدخال رقم طاولة صحيح</span>
+                </p>
                 <div class="flex justify-end space-x-2">
-                    <button id="cancel-order" class="px-4 py-2 bg-gray-200 rounded">Annuler</button>
-                    <button id="confirm-order" class="px-4 py-2 bg-[#5a4a42] text-white rounded">Confirmer</button>
+                    <button id="cancel-order" class="px-4 py-2 bg-gray-200 rounded">
+                        <span class="lang-fr">Annuler</span>
+                        <span class="lang-ar hidden">إلغاء</span>
+                    </button>
+                    <button id="confirm-order" class="px-4 py-2 bg-[#5a4a42] text-white rounded">
+                        <span class="lang-fr">Confirmer</span>
+                        <span class="lang-ar hidden">تأكيد</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -205,21 +306,23 @@
         // Data Storage
         let menuData = {
             breakfast: [
-                { id: 1, name: "Msemen", price: 15, category: "breakfast" },
-                { id: 2, name: "Beghrir", price: 12, category: "breakfast" }
+                { id: 1, name: "Msemen", name_ar: "مسمن", price: 15, category: "breakfast", image: "" },
+                { id: 2, name: "Beghrir", name_ar: "بغرير", price: 12, category: "breakfast", image: "" }
             ],
             lunch: [
-                { id: 3, name: "Tajine de Poulet", price: 45, category: "lunch" },
-                { id: 4, name: "Couscous", price: 40, category: "lunch" }
+                { id: 3, name: "Tajine de Poulet", name_ar: "طاجين الدجاج", price: 45, category: "lunch", image: "" },
+                { id: 4, name: "Couscous", name_ar: "كسكس", price: 40, category: "lunch", image: "" }
             ],
             dinner: [
-                { id: 5, name: "Harira", price: 25, category: "dinner" },
-                { id: 6, name: "Briouates", price: 30, category: "dinner" }
+                { id: 5, name: "Harira", name_ar: "حريرة", price: 25, category: "dinner", image: "" },
+                { id: 6, name: "Briouates", name_ar: "بريوات", price: 30, category: "dinner", image: "" }
             ]
         };
 
+        let restaurantLogo = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIj48dGV4dCB4PSIxMDAiIHk9IjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzVhNGE0MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+REFSIEhBU1NOQTwvdGV4dD48L3N2Zz4=";
         let orders = [];
         let currentOrder = [];
+        let currentLanguage = 'fr';
         
         // Variables for triple click detection
         let clickCount = 0;
@@ -227,12 +330,64 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
+            // تحميل الإعدادات من localStorage إن وجدت
+            loadSettings();
             loadMenu();
             setupEventListeners();
+            updateLanguageDisplay();
             
             // Add click event listener to restaurant name
             document.querySelector('.main-title').addEventListener('click', handleRestaurantNameClick);
         });
+
+        // تحميل الإعدادات
+        function loadSettings() {
+            const savedLogo = localStorage.getItem('restaurantLogo');
+            if (savedLogo) {
+                restaurantLogo = savedLogo;
+                document.getElementById('restaurant-logo').src = restaurantLogo;
+            }
+            
+            const savedMenu = localStorage.getItem('menuData');
+            if (savedMenu) {
+                menuData = JSON.parse(savedMenu);
+            }
+            
+            const savedLang = localStorage.getItem('language');
+            if (savedLang) {
+                currentLanguage = savedLang;
+            }
+        }
+
+        // حفظ الإعدادات
+        function saveSettings() {
+            localStorage.setItem('restaurantLogo', restaurantLogo);
+            localStorage.setItem('menuData', JSON.stringify(menuData));
+            localStorage.setItem('language', currentLanguage);
+        }
+
+        // تبديل اللغة
+        function switchLanguage() {
+            currentLanguage = currentLanguage === 'fr' ? 'ar' : 'fr';
+            saveSettings();
+            updateLanguageDisplay();
+            loadMenu();
+        }
+
+        // تحديث عرض اللغة
+        function updateLanguageDisplay() {
+            // تبديل العناصر الفرنسية والعربية
+            document.querySelectorAll('.lang-fr').forEach(el => {
+                el.classList.toggle('hidden', currentLanguage !== 'fr');
+            });
+            document.querySelectorAll('.lang-ar').forEach(el => {
+                el.classList.toggle('hidden', currentLanguage !== 'ar');
+            });
+            
+            // تغيير اتجاه الصفحة
+            document.body.classList.toggle('rtl', currentLanguage === 'ar');
+            document.body.classList.toggle('ltr', currentLanguage !== 'ar');
+        }
 
         // Handle triple click on restaurant name
         function handleRestaurantNameClick() {
@@ -259,26 +414,42 @@
 
             // Create sections for each category
             const categories = [
-                { id: 'breakfast', name: 'Petit-déjeuner' },
-                { id: 'lunch', name: 'Déjeuner' },
-                { id: 'dinner', name: 'Dîner' }
+                { id: 'breakfast', name: 'Petit-déjeuner', name_ar: 'الفطور' },
+                { id: 'lunch', name: 'Déjeuner', name_ar: 'الغداء' },
+                { id: 'dinner', name: 'Dîner', name_ar: 'العشاء' }
             ];
 
             categories.forEach(category => {
                 const section = document.createElement('div');
                 section.className = 'mb-8';
                 section.innerHTML = `
-                    <h2 class="menu-section-title text-xl font-bold mb-4 pb-2">${category.name}</h2>
+                    <h2 class="menu-section-title text-xl font-bold mb-4 pb-2">
+                        <span class="lang-fr">${category.name}</span>
+                        <span class="lang-ar hidden">${category.name_ar}</span>
+                    </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="${category.id}-items">
                         ${menuData[category.id].map(item => `
-                            <div class="food-item bg-white p-4 rounded shadow food-item-card">
-                                <h3 class="font-bold text-[#5a4a42]">${item.name}</h3>
-                                <div class="flex justify-between items-center mt-2">
-                                    <span class="text-[#8B4513] font-bold">${item.price} DH</span>
-                                    <button class="add-to-order px-3 py-1 text-white rounded" 
-                                            data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
-                                        Ajouter
-                                    </button>
+                            <div class="food-item bg-white rounded shadow food-item-card overflow-hidden">
+                                ${item.image ? `
+                                    <img src="${item.image}" class="food-image" alt="${currentLanguage === 'fr' ? item.name : item.name_ar}">
+                                ` : `
+                                    <div class="food-image bg-gray-200 flex items-center justify-center">
+                                        <i class="fas fa-utensils text-4xl text-gray-400"></i>
+                                    </div>
+                                `}
+                                <div class="p-4">
+                                    <h3 class="font-bold text-[#5a4a42]">
+                                        <span class="lang-fr">${item.name}</span>
+                                        <span class="lang-ar hidden">${item.name_ar}</span>
+                                    </h3>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="text-[#8B4513] font-bold">${item.price} DH</span>
+                                        <button class="add-to-order px-3 py-1 text-white rounded" 
+                                                data-id="${item.id}" data-name="${currentLanguage === 'fr' ? item.name : item.name_ar}" data-price="${item.price}">
+                                            <span class="lang-fr">Ajouter</span>
+                                            <span class="lang-ar hidden">أضف</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         `).join('')}
@@ -287,9 +458,6 @@
                 container.appendChild(section);
             });
         }
-
-        // باقي الدوال والوظائف تبقى كما هي بدون تغيير
-        // ... (يتبع نفس الدوال الموجودة في الكود السابق)
 
         // Load admin dashboard
         function loadAdminDashboard() {
@@ -302,7 +470,10 @@
             const container = document.getElementById('orders-list');
             
             if (orders.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">Aucune commande pour le moment</p>';
+                container.innerHTML = `
+                    <p class="text-gray-500 lang-fr">Aucune commande pour le moment</p>
+                    <p class="text-gray-500 lang-ar hidden">لا توجد طلبات في الوقت الحالي</p>
+                `;
                 return;
             }
 
@@ -310,8 +481,14 @@
                 <div class="order bg-white p-4 rounded shadow food-item-card" data-id="${order.id}">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="font-bold text-[#5a4a42]">Commande #${order.id}</h3>
-                            <p class="text-sm">Table: ${order.tableNumber}</p>
+                            <h3 class="font-bold text-[#5a4a42]">
+                                <span class="lang-fr">Commande #${order.id}</span>
+                                <span class="lang-ar hidden">طلب #${order.id}</span>
+                            </h3>
+                            <p class="text-sm">
+                                <span class="lang-fr">Table: ${order.tableNumber}</span>
+                                <span class="lang-ar hidden">طاولة: ${order.tableNumber}</span>
+                            </p>
                             <p class="text-sm">${new Date(order.time).toLocaleTimeString()}</p>
                         </div>
                         <span class="status-badge px-2 py-1 rounded text-xs ${getStatusClass(order.status)}">
@@ -321,18 +498,33 @@
                     <div class="mt-2">
                         ${order.items.map(item => `
                             <div class="flex justify-between text-sm py-1 border-b border-[#d4a762]">
-                                <span>${item.quantity}x ${item.name}</span>
+                                <span>${item.quantity}x ${currentLanguage === 'fr' ? item.name : item.name_ar}</span>
                                 <span>${item.price * item.quantity} DH</span>
                             </div>
                         `).join('')}
                     </div>
                     <div class="flex justify-between items-center mt-2 pt-2 border-t border-[#d4a762]">
-                        <span class="font-bold text-[#5a4a42]">Total: ${order.total} DH</span>
+                        <span class="font-bold text-[#5a4a42]">
+                            <span class="lang-fr">Total: ${order.total} DH</span>
+                            <span class="lang-ar hidden">المجموع: ${order.total} درهم</span>
+                        </span>
                         <select class="order-status text-xs p-1 border border-[#d4a762] rounded" data-order-id="${order.id}">
-                            <option value="new" ${order.status === 'new' ? 'selected' : ''}>Nouvelle</option>
-                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>En préparation</option>
-                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Prête</option>
-                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
+                            <option value="new" ${order.status === 'new' ? 'selected' : ''}>
+                                <span class="lang-fr">Nouvelle</span>
+                                <span class="lang-ar hidden">جديدة</span>
+                            </option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>
+                                <span class="lang-fr">En préparation</span>
+                                <span class="lang-ar hidden">قيد التحضير</span>
+                            </option>
+                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>
+                                <span class="lang-fr">Prête</span>
+                                <span class="lang-ar hidden">جاهزة</span>
+                            </option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>
+                                <span class="lang-fr">Livrée</span>
+                                <span class="lang-ar hidden">تم التسليم</span>
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -343,60 +535,178 @@
         function loadMenuEditor() {
             const container = document.getElementById('menu-editor');
             
-            container.innerHTML = Object.entries(menuData).map(([category, items]) => `
+            container.innerHTML = `
+                <div class="mb-6">
+                    <h3 class="font-bold mb-4 text-[#5a4a42]">
+                        <span class="lang-fr">Paramètres du Restaurant</span>
+                        <span class="lang-ar hidden">إعدادات المطعم</span>
+                    </h3>
+                    <div class="bg-white p-4 rounded shadow food-item-card mb-6">
+                        <h4 class="font-bold mb-2">
+                            <span class="lang-fr">Logo du Restaurant</span>
+                            <span class="lang-ar hidden">شعار المطعم</span>
+                        </h4>
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <img id="logo-preview" src="${restaurantLogo}" class="w-20 h-20 object-contain mb-2 md:mb-0 md:mr-4">
+                            <div class="flex-1">
+                                <div class="mb-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <span class="lang-fr">URL de l'image du logo</span>
+                                        <span class="lang-ar hidden">رابط صورة الشعار</span>
+                                    </label>
+                                    <input type="text" id="logo-url" class="w-full p-2 border border-[#d4a762] rounded" 
+                                           placeholder="https://example.com/logo.png" value="${restaurantLogo}">
+                                </div>
+                                <button id="update-logo" class="px-3 py-1 bg-[#5a4a42] text-white rounded text-sm">
+                                    <span class="lang-fr">Mettre à jour</span>
+                                    <span class="lang-ar hidden">تحديث</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ${Object.entries(menuData).map(([category, items]) => `
                 <div class="mb-6">
                     <h3 class="font-bold mb-2 text-[#5a4a42]">${getCategoryName(category)}</h3>
                     <div class="space-y-3" id="${category}-editor">
                         ${items.map(item => `
-                            <div class="menu-item bg-white p-3 rounded shadow food-item-card flex justify-between items-center">
-                                <div class="flex-1 mr-4">
-                                    <input type="text" value="${item.name}" 
-                                           class="item-name w-full p-1 border border-[#d4a762] rounded" 
-                                           data-id="${item.id}" data-category="${category}">
+                            <div class="menu-item bg-white p-3 rounded shadow food-item-card flex flex-col md:flex-row">
+                                <div class="md:w-1/4 mb-3 md:mb-0 md:mr-4">
+                                    <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjYWFhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5JbWFnZSBub24gZGlzcG9uaWJsZTwvdGV4dD48L3N2Zz4='}" 
+                                         class="w-full h-32 object-cover rounded mb-2">
+                                    <div class="mb-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            <span class="lang-fr">URL de l'image</span>
+                                            <span class="lang-ar hidden">رابط الصورة</span>
+                                        </label>
+                                        <input type="text" value="${item.image}" 
+                                               class="item-image-url w-full p-1 border border-[#d4a762] rounded" 
+                                               data-id="${item.id}" data-category="${category}" placeholder="https://example.com/image.jpg">
+                                    </div>
                                 </div>
-                                <div class="w-20">
-                                    <input type="number" value="${item.price}" 
-                                           class="item-price w-full p-1 border border-[#d4a762] rounded" 
-                                           data-id="${item.id}" data-category="${category}">
+                                <div class="flex-1">
+                                    <div class="flex-1 mr-4 mb-3">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            <span class="lang-fr">Nom (Français)</span>
+                                            <span class="lang-ar hidden">الاسم (بالفرنسية)</span>
+                                        </label>
+                                        <input type="text" value="${item.name}" 
+                                               class="item-name w-full p-1 border border-[#d4a762] rounded" 
+                                               data-id="${item.id}" data-category="${category}">
+                                    </div>
+                                    <div class="flex-1 mr-4 mb-3">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            <span class="lang-fr">Nom (العربية)</span>
+                                            <span class="lang-ar hidden">الاسم (بالعربية)</span>
+                                        </label>
+                                        <input type="text" value="${item.name_ar}" 
+                                               class="item-name-ar w-full p-1 border border-[#d4a762] rounded" 
+                                               data-id="${item.id}" data-category="${category}">
+                                    </div>
+                                    <div class="w-full mb-3">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            <span class="lang-fr">Prix (DH)</span>
+                                            <span class="lang-ar hidden">السعر (درهم)</span>
+                                        </label>
+                                        <input type="number" value="${item.price}" 
+                                               class="item-price w-full p-1 border border-[#d4a762] rounded" 
+                                               data-id="${item.id}" data-category="${category}">
+                                    </div>
                                 </div>
-                                <button class="delete-item ml-2 px-2 py-1 bg-red-500 text-white rounded text-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="flex items-start">
+                                    <button class="delete-item ml-2 px-2 py-1 bg-red-500 text-white rounded text-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
                     <button class="add-item mt-2 px-3 py-1 bg-gray-200 rounded text-sm" data-category="${category}">
-                        <i class="fas fa-plus mr-1"></i> Ajouter un plat
+                        <i class="fas fa-plus mr-1"></i>
+                        <span class="lang-fr">Ajouter un plat</span>
+                        <span class="lang-ar hidden">إضافة طبق</span>
                     </button>
                 </div>
-            `).join('');
+                `).join('')}
 
-            // Add "Save Menu" button
-            container.insertAdjacentHTML('beforeend', `
                 <button id="save-menu" class="mt-4 px-4 py-2 bg-[#5a4a42] text-white rounded hover:bg-[#3a2a22]">
-                    Enregistrer le Menu
+                    <span class="lang-fr">Enregistrer le Menu</span>
+                    <span class="lang-ar hidden">حفظ القائمة</span>
                 </button>
-            `);
+            `;
+
+            // Logo update
+            document.getElementById('update-logo').addEventListener('click', function() {
+                const logoUrl = document.getElementById('logo-url').value.trim();
+                if (logoUrl) {
+                    restaurantLogo = logoUrl;
+                    document.getElementById('restaurant-logo').src = restaurantLogo;
+                    document.getElementById('logo-preview').src = restaurantLogo;
+                    saveSettings();
+                }
+            });
+
+            // Image URL update
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('item-image-url')) {
+                    const id = parseInt(e.target.dataset.id);
+                    const category = e.target.dataset.category;
+                    const item = menuData[category].find(i => i.id === id);
+                    if (item) {
+                        item.image = e.target.value;
+                    }
+                }
+                
+                if (e.target.classList.contains('item-name-ar')) {
+                    const id = parseInt(e.target.dataset.id);
+                    const category = e.target.dataset.category;
+                    const item = menuData[category].find(i => i.id === id);
+                    if (item) {
+                        item.name_ar = e.target.value;
+                    }
+                }
+            });
         }
 
         // Helper functions
         function getCategoryName(category) {
             const names = {
-                breakfast: "Petit-déjeuner",
-                lunch: "Déjeuner",
-                dinner: "Dîner"
+                breakfast: {
+                    fr: "Petit-déjeuner",
+                    ar: "الفطور"
+                },
+                lunch: {
+                    fr: "Déjeuner",
+                    ar: "الغداء"
+                },
+                dinner: {
+                    fr: "Dîner",
+                    ar: "العشاء"
+                }
             };
-            return names[category];
+            return names[category][currentLanguage];
         }
 
         function getStatusText(status) {
             const statusMap = {
-                new: "Nouvelle",
-                preparing: "En préparation",
-                ready: "Prête",
-                delivered: "Livrée"
+                new: {
+                    fr: "Nouvelle",
+                    ar: "جديدة"
+                },
+                preparing: {
+                    fr: "En préparation",
+                    ar: "قيد التحضير"
+                },
+                ready: {
+                    fr: "Prête",
+                    ar: "جاهزة"
+                },
+                delivered: {
+                    fr: "Livrée",
+                    ar: "تم التسليم"
+                }
             };
-            return statusMap[status] || status;
+            return statusMap[status][currentLanguage] || status;
         }
 
         function getStatusClass(status) {
@@ -415,7 +725,10 @@
             const totalElement = document.getElementById('order-total');
             
             if (currentOrder.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">Votre panier est vide</p>';
+                container.innerHTML = `
+                    <p class="text-gray-500 lang-fr">Votre panier est vide</p>
+                    <p class="text-gray-500 lang-ar hidden">سلة التسوق فارغة</p>
+                `;
                 totalElement.textContent = "0 DH";
                 return;
             }
@@ -436,19 +749,25 @@
             const adminPassword = "1234";
             let loginAttempts = 0;
             
-            const password = prompt("Entrez le mot de passe admin:");
+            const password = prompt(currentLanguage === 'fr' ? 
+                "Entrez le mot de passe admin:" : "أدخل كلمة مرور المدير:");
             if (password === adminPassword) {
                 document.getElementById('customer-view').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 loadAdminDashboard();
             } else {
                 loginAttempts++;
-                alert("Mot de passe incorrect. Tentatives restantes: " + (3 - loginAttempts));
+                alert(currentLanguage === 'fr' ? 
+                    `Mot de passe incorrect. Tentatives restantes: ${3 - loginAttempts}` :
+                    `كلمة المرور غير صحيحة. المحاولات المتبقية: ${3 - loginAttempts}`);
             }
         }
 
         // Setup event listeners
         function setupEventListeners() {
+            // Language switcher
+            document.getElementById('switch-lang').addEventListener('click', switchLanguage);
+            
             // Add to order button
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('add-to-order') || e.target.closest('.add-to-order')) {
@@ -472,7 +791,8 @@
             // Submit order
             document.getElementById('submit-order').addEventListener('click', () => {
                 if (currentOrder.length === 0) {
-                    alert("Votre panier est vide!");
+                    alert(currentLanguage === 'fr' ? 
+                        "Votre panier est vide!" : "سلة التسوق فارغة!");
                     return;
                 }
                 document.getElementById('table-modal').classList.remove('hidden');
@@ -557,8 +877,10 @@
                     const newItem = {
                         id: newId,
                         name: "Nouveau plat",
+                        name_ar: "طبق جديد",
                         price: 0,
-                        category: category
+                        category: category,
+                        image: ""
                     };
                     
                     menuData[category].push(newItem);
@@ -581,7 +903,8 @@
             // Save menu changes automatically on input
             let saveTimeout;
             document.addEventListener('input', (e) => {
-                if (e.target.classList.contains('item-name') || e.target.classList.contains('item-price')) {
+                if (e.target.classList.contains('item-name') || e.target.classList.contains('item-price') || 
+                    e.target.classList.contains('item-name-ar') || e.target.classList.contains('item-image-url')) {
                     const input = e.target;
                     const id = parseInt(input.dataset.id);
                     const category = input.dataset.category;
@@ -590,8 +913,12 @@
                     if (item) {
                         if (input.classList.contains('item-name')) {
                             item.name = input.value;
-                        } else {
+                        } else if (input.classList.contains('item-name-ar')) {
+                            item.name_ar = input.value;
+                        } else if (input.classList.contains('item-price')) {
                             item.price = parseFloat(input.value) || 0;
+                        } else if (input.classList.contains('item-image-url')) {
+                            item.image = input.value;
                         }
                         
                         // Debounce save to prevent too many updates
@@ -606,7 +933,9 @@
             // Save menu button
             document.addEventListener('click', (e) => {
                 if (e.target.id === 'save-menu') {
-                    alert("Menu enregistré avec succès!");
+                    saveSettings();
+                    alert(currentLanguage === 'fr' ? 
+                        "Menu enregistré avec succès!" : "تم حفظ القائمة بنجاح!");
                     loadMenu(); // Update customer view
                 }
             });
