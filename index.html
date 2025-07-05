@@ -6,34 +6,17 @@
     <title>DAR HASSNA - Système de Commande</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبات Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f8f8;
-        }
-        .food-item {
-            transition: all 0.3s ease;
-        }
-        .order-status-new {
-            background-color: #FEF3C7;
-            color: #92400E;
-        }
-        .order-status-preparing {
-            background-color: #BFDBFE;
-            color: #1E40AF;
-        }
-        .order-status-ready {
-            background-color: #D1FAE5;
-            color: #065F46;
-        }
-        .order-status-delivered {
-            background-color: #E5E7EB;
-            color: #4B5563;
-        }
-        .input-error {
-            border-color: #EF4444;
-            animation: shake 0.5s;
-        }
+        /* أنماط CSS المخصصة */
+        .order-status-new { background-color: #FEF3C7; color: #92400E; }
+        .order-status-preparing { background-color: #BFDBFE; color: #1E40AF; }
+        .order-status-ready { background-color: #D1FAE5; color: #065F46; }
+        .order-status-delivered { background-color: #E5E7EB; color: #4B5563; }
+        .input-error { border-color: #EF4444; animation: shake 0.5s; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -303,24 +286,28 @@
     </div>
 
     <script>
-        // Data Storage
-        let menuData = {
-            breakfast: [
-                { id: 1, name: "Msemen", name_ar: "مسمن", price: 15, category: "breakfast", image: "" },
-                { id: 2, name: "Beghrir", name_ar: "بغرير", price: 12, category: "breakfast", image: "" }
-            ],
-            lunch: [
-                { id: 3, name: "Tajine de Poulet", name_ar: "طاجين الدجاج", price: 45, category: "lunch", image: "" },
-                { id: 4, name: "Couscous", name_ar: "كسكس", price: 40, category: "lunch", image: "" }
-            ],
-            dinner: [
-                { id: 5, name: "Harira", name_ar: "حريرة", price: 25, category: "dinner", image: "" },
-                { id: 6, name: "Briouates", name_ar: "بريوات", price: 30, category: "dinner", image: "" }
-            ]
+        // التهيئة الآمنة لـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpSF4J0bsd6T0ImMpse0KQQRADaxiYUQw",
+            authDomain: "darhassna-484c3.firebaseapp.com",
+            projectId: "darhassna-484c3",
+            storageBucket: "darhassna-484c3.appspot.com",
+            messagingSenderId: "141393162149",
+            appId: "1:141393162149:web:0717227eac221f5ddfc24c"
         };
 
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Data Storage
+        let menuData = {
+            breakfast: [],
+            lunch: [],
+            dinner: []
+        };
         let restaurantLogo = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTAwIj48dGV4dCB4PSIxMDAiIHk9IjUwIiBmb250LWZhbWlseT0iR2VvcmdpYSIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzVhNGE0MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+REFSIEhBU1NOQTwvdGV4dD48L3N2Zz4=";
-        let orders = [];
         let currentOrder = [];
         let currentLanguage = 'fr';
         
@@ -330,9 +317,7 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
-            // تحميل الإعدادات من localStorage إن وجدت
-            loadSettings();
-            loadMenu();
+            loadInitialData();
             setupEventListeners();
             updateLanguageDisplay();
             
@@ -340,36 +325,77 @@
             document.querySelector('.main-title').addEventListener('click', handleRestaurantNameClick);
         });
 
-        // تحميل الإعدادات
-        function loadSettings() {
-            const savedLogo = localStorage.getItem('restaurantLogo');
-            if (savedLogo) {
-                restaurantLogo = savedLogo;
-                document.getElementById('restaurant-logo').src = restaurantLogo;
-            }
-            
-            const savedMenu = localStorage.getItem('menuData');
-            if (savedMenu) {
-                menuData = JSON.parse(savedMenu);
-            }
-            
-            const savedLang = localStorage.getItem('language');
-            if (savedLang) {
-                currentLanguage = savedLang;
+        // Load initial data from Firebase
+        async function loadInitialData() {
+            try {
+                // Load menu
+                const menuSnapshot = await db.collection('menu').get();
+                if (!menuSnapshot.empty) {
+                    menuData = { breakfast: [], lunch: [], dinner: [] };
+                    menuSnapshot.forEach(doc => {
+                        const item = doc.data();
+                        menuData[item.category].push(item);
+                    });
+                }
+
+                // Load restaurant settings
+                const settingsDoc = await db.collection('settings').doc('restaurant').get();
+                if (settingsDoc.exists) {
+                    const settings = settingsDoc.data();
+                    restaurantLogo = settings.logo || restaurantLogo;
+                    currentLanguage = settings.language || currentLanguage;
+                    document.getElementById('restaurant-logo').src = restaurantLogo;
+                }
+
+                loadMenu();
+            } catch (error) {
+                console.error("Error loading initial data:", error);
             }
         }
 
-        // حفظ الإعدادات
-        function saveSettings() {
-            localStorage.setItem('restaurantLogo', restaurantLogo);
-            localStorage.setItem('menuData', JSON.stringify(menuData));
-            localStorage.setItem('language', currentLanguage);
+        // Save settings to Firebase
+        async function saveSettings() {
+            try {
+                await db.collection('settings').doc('restaurant').set({
+                    logo: restaurantLogo,
+                    language: currentLanguage,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error saving settings:", error);
+            }
+        }
+
+        // Save menu to Firebase
+        async function saveMenu() {
+            try {
+                const batch = db.batch();
+                
+                // Delete existing menu items
+                const menuSnapshot = await db.collection('menu').get();
+                menuSnapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                // Add new menu items
+                const menuItems = [...menuData.breakfast, ...menuData.lunch, ...menuData.dinner];
+                menuItems.forEach(item => {
+                    const newDocRef = db.collection('menu').doc();
+                    batch.set(newDocRef, item);
+                });
+                
+                await batch.commit();
+                return true;
+            } catch (error) {
+                console.error("Error saving menu:", error);
+                return false;
+            }
         }
 
         // تبديل اللغة
-        function switchLanguage() {
+        async function switchLanguage() {
             currentLanguage = currentLanguage === 'fr' ? 'ar' : 'fr';
-            saveSettings();
+            await saveSettings();
             updateLanguageDisplay();
             loadMenu();
         }
@@ -460,75 +486,90 @@
         }
 
         // Load admin dashboard
-        function loadAdminDashboard() {
-            loadOrdersForAdmin();
+        async function loadAdminDashboard() {
+            await loadOrdersForAdmin();
             loadMenuEditor();
         }
 
         // Load orders for admin view
-        function loadOrdersForAdmin() {
+        async function loadOrdersForAdmin() {
             const container = document.getElementById('orders-list');
             
-            if (orders.length === 0) {
-                container.innerHTML = `
-                    <p class="text-gray-500 lang-fr">Aucune commande pour le moment</p>
-                    <p class="text-gray-500 lang-ar hidden">لا توجد طلبات في الوقت الحالي</p>
-                `;
-                return;
-            }
+            try {
+                const snapshot = await db.collection('orders')
+                    .orderBy('time', 'desc')
+                    .get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <p class="text-gray-500 lang-fr">Aucune commande pour le moment</p>
+                        <p class="text-gray-500 lang-ar hidden">لا توجد طلبات في الوقت الحالي</p>
+                    `;
+                    return;
+                }
 
-            container.innerHTML = orders.map(order => `
-                <div class="order bg-white p-4 rounded shadow food-item-card" data-id="${order.id}">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-[#5a4a42]">
-                                <span class="lang-fr">Commande #${order.id}</span>
-                                <span class="lang-ar hidden">طلب #${order.id}</span>
-                            </h3>
-                            <p class="text-sm">
-                                <span class="lang-fr">Table: ${order.tableNumber}</span>
-                                <span class="lang-ar hidden">طاولة: ${order.tableNumber}</span>
-                            </p>
-                            <p class="text-sm">${new Date(order.time).toLocaleTimeString()}</p>
-                        </div>
-                        <span class="status-badge px-2 py-1 rounded text-xs ${getStatusClass(order.status)}">
-                            ${getStatusText(order.status)}
-                        </span>
-                    </div>
-                    <div class="mt-2">
-                        ${order.items.map(item => `
-                            <div class="flex justify-between text-sm py-1 border-b border-[#d4a762]">
-                                <span>${item.quantity}x ${currentLanguage === 'fr' ? item.name : item.name_ar}</span>
-                                <span>${item.price * item.quantity} DH</span>
+                container.innerHTML = snapshot.docs.map(doc => {
+                    const order = doc.data();
+                    return `
+                        <div class="order bg-white p-4 rounded shadow food-item-card" data-id="${doc.id}">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-[#5a4a42]">
+                                        <span class="lang-fr">Commande #${doc.id.substring(0, 6)}</span>
+                                        <span class="lang-ar hidden">طلب #${doc.id.substring(0, 6)}</span>
+                                    </h3>
+                                    <p class="text-sm">
+                                        <span class="lang-fr">Table: ${order.tableNumber}</span>
+                                        <span class="lang-ar hidden">طاولة: ${order.tableNumber}</span>
+                                    </p>
+                                    <p class="text-sm">${new Date(order.time?.toDate()).toLocaleTimeString()}</p>
+                                </div>
+                                <span class="status-badge px-2 py-1 rounded text-xs ${getStatusClass(order.status)}">
+                                    ${getStatusText(order.status)}
+                                </span>
                             </div>
-                        `).join('')}
-                    </div>
-                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-[#d4a762]">
-                        <span class="font-bold text-[#5a4a42]">
-                            <span class="lang-fr">Total: ${order.total} DH</span>
-                            <span class="lang-ar hidden">المجموع: ${order.total} درهم</span>
-                        </span>
-                        <select class="order-status text-xs p-1 border border-[#d4a762] rounded" data-order-id="${order.id}">
-                            <option value="new" ${order.status === 'new' ? 'selected' : ''}>
-                                <span class="lang-fr">Nouvelle</span>
-                                <span class="lang-ar hidden">جديدة</span>
-                            </option>
-                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>
-                                <span class="lang-fr">En préparation</span>
-                                <span class="lang-ar hidden">قيد التحضير</span>
-                            </option>
-                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>
-                                <span class="lang-fr">Prête</span>
-                                <span class="lang-ar hidden">جاهزة</span>
-                            </option>
-                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>
-                                <span class="lang-fr">Livrée</span>
-                                <span class="lang-ar hidden">تم التسليم</span>
-                            </option>
-                        </select>
-                    </div>
-                </div>
-            `).join('');
+                            <div class="mt-2">
+                                ${order.items.map(item => `
+                                    <div class="flex justify-between text-sm py-1 border-b border-[#d4a762]">
+                                        <span>${item.quantity}x ${currentLanguage === 'fr' ? item.name : item.name_ar}</span>
+                                        <span>${item.price * item.quantity} DH</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-[#d4a762]">
+                                <span class="font-bold text-[#5a4a42]">
+                                    <span class="lang-fr">Total: ${order.total} DH</span>
+                                    <span class="lang-ar hidden">المجموع: ${order.total} درهم</span>
+                                </span>
+                                <select class="order-status text-xs p-1 border border-[#d4a762] rounded" data-order-id="${doc.id}">
+                                    <option value="new" ${order.status === 'new' ? 'selected' : ''}>
+                                        <span class="lang-fr">Nouvelle</span>
+                                        <span class="lang-ar hidden">جديدة</span>
+                                    </option>
+                                    <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>
+                                        <span class="lang-fr">En préparation</span>
+                                        <span class="lang-ar hidden">قيد التحضير</span>
+                                    </option>
+                                    <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>
+                                        <span class="lang-fr">Prête</span>
+                                        <span class="lang-ar hidden">جاهزة</span>
+                                    </option>
+                                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>
+                                        <span class="lang-fr">Livrée</span>
+                                        <span class="lang-ar hidden">تم التسليم</span>
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                container.innerHTML = `
+                    <p class="text-red-500 lang-fr">Erreur de chargement des commandes</p>
+                    <p class="text-red-500 lang-ar hidden">خطأ في تحميل الطلبات</p>
+                `;
+            }
         }
 
         // Load menu editor for admin
@@ -636,20 +677,20 @@
             `;
 
             // Logo update
-            document.getElementById('update-logo').addEventListener('click', function() {
+            document.getElementById('update-logo').addEventListener('click', async function() {
                 const logoUrl = document.getElementById('logo-url').value.trim();
                 if (logoUrl) {
                     restaurantLogo = logoUrl;
                     document.getElementById('restaurant-logo').src = restaurantLogo;
                     document.getElementById('logo-preview').src = restaurantLogo;
-                    saveSettings();
+                    await saveSettings();
                 }
             });
 
             // Image URL update
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('item-image-url')) {
-                    const id = parseInt(e.target.dataset.id);
+                    const id = e.target.dataset.id;
                     const category = e.target.dataset.category;
                     const item = menuData[category].find(i => i.id === id);
                     if (item) {
@@ -658,7 +699,7 @@
                 }
                 
                 if (e.target.classList.contains('item-name-ar')) {
-                    const id = parseInt(e.target.dataset.id);
+                    const id = e.target.dataset.id;
                     const category = e.target.dataset.category;
                     const item = menuData[category].find(i => i.id === id);
                     if (item) {
@@ -799,7 +840,7 @@
             });
 
             // Confirm order
-            document.getElementById('confirm-order').addEventListener('click', () => {
+            document.getElementById('confirm-order').addEventListener('click', async () => {
                 const tableNumber = document.getElementById('table-number').value.trim();
                 const errorElement = document.getElementById('table-error');
                 
@@ -816,25 +857,33 @@
                 
                 // Create new order
                 const newOrder = {
-                    id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
                     tableNumber: parseInt(tableNumber),
                     items: [...currentOrder],
                     total: currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                     status: "new",
-                    time: new Date()
+                    time: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                orders.unshift(newOrder);
-                currentOrder = [];
-                updateOrderSummary();
-                
-                // Close modal and reset
-                document.getElementById('table-modal').classList.add('hidden');
-                document.getElementById('table-number').value = '';
-                
-                // If in admin view, reload orders
-                if (!document.getElementById('admin-dashboard').classList.contains('hidden')) {
-                    loadOrdersForAdmin();
+                try {
+                    await db.collection('orders').add(newOrder);
+                    currentOrder = [];
+                    updateOrderSummary();
+                    
+                    // Close modal and reset
+                    document.getElementById('table-modal').classList.add('hidden');
+                    document.getElementById('table-number').value = '';
+                    
+                    // If in admin view, reload orders
+                    if (!document.getElementById('admin-dashboard').classList.contains('hidden')) {
+                        await loadOrdersForAdmin();
+                    }
+                    
+                    alert(currentLanguage === 'fr' ? 
+                        "Commande passée avec succès!" : "تم تقديم الطلب بنجاح!");
+                } catch (error) {
+                    console.error("Error adding order:", error);
+                    alert(currentLanguage === 'fr' ? 
+                        "Erreur lors de la commande" : "حدث خطأ أثناء تقديم الطلب");
                 }
             });
 
@@ -852,14 +901,18 @@
             });
 
             // Order status change
-            document.addEventListener('change', (e) => {
+            document.addEventListener('change', async (e) => {
                 if (e.target.classList.contains('order-status')) {
-                    const orderId = parseInt(e.target.dataset.orderId);
+                    const orderId = e.target.dataset.orderId;
                     const newStatus = e.target.value;
                     
-                    const order = orders.find(o => o.id === orderId);
-                    if (order) {
-                        order.status = newStatus;
+                    try {
+                        await db.collection('orders').doc(orderId).update({
+                            status: newStatus,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (error) {
+                        console.error("Error updating order status:", error);
                     }
                 }
             });
@@ -871,8 +924,7 @@
                     const button = e.target.classList.contains('add-item') ? e.target : e.target.closest('.add-item');
                     const category = button.dataset.category;
                     
-                    const newId = menuData[category].length > 0 ? 
-                        Math.max(...menuData[category].map(i => i.id)) + 1 : 1;
+                    const newId = Date.now().toString(); // Generate unique ID
                     
                     const newItem = {
                         id: newId,
@@ -891,7 +943,7 @@
                 if (e.target.classList.contains('delete-item') || e.target.closest('.delete-item')) {
                     const button = e.target.classList.contains('delete-item') ? e.target : e.target.closest('.delete-item');
                     const itemElement = button.closest('.menu-item');
-                    const id = parseInt(itemElement.querySelector('.item-name').dataset.id);
+                    const id = itemElement.querySelector('.item-name').dataset.id;
                     const category = itemElement.querySelector('.item-name').dataset.category;
                     
                     menuData[category] = menuData[category].filter(item => item.id !== id);
@@ -906,7 +958,7 @@
                 if (e.target.classList.contains('item-name') || e.target.classList.contains('item-price') || 
                     e.target.classList.contains('item-name-ar') || e.target.classList.contains('item-image-url')) {
                     const input = e.target;
-                    const id = parseInt(input.dataset.id);
+                    const id = input.dataset.id;
                     const category = input.dataset.category;
                     const item = menuData[category].find(i => i.id === id);
                     
@@ -920,23 +972,22 @@
                         } else if (input.classList.contains('item-image-url')) {
                             item.image = input.value;
                         }
-                        
-                        // Debounce save to prevent too many updates
-                        clearTimeout(saveTimeout);
-                        saveTimeout = setTimeout(() => {
-                            loadMenu(); // Update customer view
-                        }, 1000);
                     }
                 }
             });
 
             // Save menu button
-            document.addEventListener('click', (e) => {
+            document.addEventListener('click', async (e) => {
                 if (e.target.id === 'save-menu') {
-                    saveSettings();
-                    alert(currentLanguage === 'fr' ? 
-                        "Menu enregistré avec succès!" : "تم حفظ القائمة بنجاح!");
-                    loadMenu(); // Update customer view
+                    const success = await saveMenu();
+                    if (success) {
+                        alert(currentLanguage === 'fr' ? 
+                            "Menu enregistré avec succès!" : "تم حفظ القائمة بنجاح!");
+                        loadMenu(); // Update customer view
+                    } else {
+                        alert(currentLanguage === 'fr' ? 
+                            "Erreur lors de l'enregistrement du menu" : "حدث خطأ أثناء حفظ القائمة");
+                    }
                 }
             });
         }
