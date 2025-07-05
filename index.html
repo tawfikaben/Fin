@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dar Hassna - Système de Commande</title>
+    <title>DAR HASSNA - Système de Commande</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -42,18 +42,79 @@
         .restaurant-name {
             cursor: pointer;
             user-select: none;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #5a4a42;
+        }
+        .header-container {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-bottom: 2px solid #d4a762;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .date-display {
+            color: #7a6b5e;
+            font-weight: 500;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .main-title {
+            font-family: 'Georgia', serif;
+            color: #5a4a42;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .main-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background-color: #d4a762;
         }
         .menu-title {
-            background-color: #8B4513;
+            background-color: #5a4a42;
             color: white;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin-bottom: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: bold;
         }
-        .arabic-date {
-            font-family: 'Arial', sans-serif;
-            direction: rtl;
+        .menu-section-title {
+            font-family: 'Georgia', serif;
+            color: #5a4a42;
+            border-bottom: 1px solid #d4a762;
+            padding-bottom: 5px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .add-to-order {
+            background-color: #8B4513;
+            transition: all 0.3s ease;
+        }
+        .add-to-order:hover {
+            background-color: #6B3410;
+            transform: translateY(-2px);
+        }
+        .submit-order-btn {
+            background-color: #8B4513;
+            transition: all 0.3s ease;
+        }
+        .submit-order-btn:hover {
+            background-color: #6B3410;
+            transform: translateY(-2px);
+        }
+        .food-item-card {
+            border: 1px solid #d4a762;
         }
     </style>
 </head>
@@ -61,32 +122,37 @@
     <div id="app" class="min-h-screen">
         <!-- Customer View -->
         <div id="customer-view">
-            <header class="bg-white shadow-md p-4">
-                <h1 class="text-2xl font-bold text-[#8B4513] text-center restaurant-name">Dar Hassna</h1>
-                <!-- إضافة عنوان لائحة الطعام مع التاريخ -->
+            <header class="header-container shadow-md">
+                <h1 class="main-title">DAR HASSNA</h1>
+                <div class="date-display">
+                    <script>
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const today = new Date();
+                        document.write(today.getDate() + " " + months[today.getMonth()] + ", " + today.getFullYear());
+                    </script>
+                </div>
                 <div class="menu-title">
-                    <h2 class="text-xl font-bold">لائحة طعام دار حسنا</h2>
-                    <div id="current-date" class="text-sm arabic-date mt-1"></div>
+                    لائحة الطعام اليومية
                 </div>
             </header>
 
-            <main class="container mx-auto p-4">
+            <main class="container mx-auto p-4 mt-6">
                 <!-- Menu Sections -->
                 <div id="menu-container">
                     <!-- Menu items loaded dynamically -->
                 </div>
 
                 <!-- Order Summary -->
-                <div class="mt-8 bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold mb-2">Votre Commande</h3>
+                <div class="mt-8 bg-white p-4 rounded-lg shadow food-item-card">
+                    <h3 class="text-lg font-bold mb-2 text-[#5a4a42]">Votre Commande</h3>
                     <div id="order-items" class="mb-3">
                         <p class="text-gray-500">Votre panier est vide</p>
                     </div>
-                    <div class="flex justify-between border-t pt-2">
-                        <span class="font-bold">Total:</span>
+                    <div class="flex justify-between border-t border-[#d4a762] pt-2">
+                        <span class="font-bold text-[#5a4a42]">Total:</span>
                         <span id="order-total" class="font-bold">0 DH</span>
                     </div>
-                    <button id="submit-order" class="w-full mt-4 bg-[#8B4513] text-white py-2 rounded hover:bg-[#6B3410]">
+                    <button id="submit-order" class="submit-order-btn w-full mt-4 text-white py-2 rounded hover:bg-[#6B3410]">
                         Commander
                     </button>
                 </div>
@@ -96,7 +162,7 @@
         <!-- Admin Dashboard (Hidden by default) -->
         <div id="admin-dashboard" class="hidden">
             <header class="bg-white shadow-md p-4 flex justify-between items-center">
-                <h1 class="text-xl font-bold text-[#8B4513]">Tableau de Bord</h1>
+                <h1 class="text-xl font-bold text-[#5a4a42]">Tableau de Bord</h1>
                 <button id="logout-btn" class="bg-red-500 text-white px-3 py-1 rounded">
                     Déconnexion
                 </button>
@@ -105,7 +171,7 @@
             <div class="container mx-auto p-4">
                 <!-- Orders Section -->
                 <div class="mb-8">
-                    <h2 class="text-lg font-bold mb-4">Commandes en Cours</h2>
+                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">Commandes en Cours</h2>
                     <div id="orders-list" class="space-y-3">
                         <!-- Orders loaded dynamically -->
                     </div>
@@ -113,7 +179,7 @@
 
                 <!-- Menu Management -->
                 <div>
-                    <h2 class="text-lg font-bold mb-4">Gestion du Menu</h2>
+                    <h2 class="text-lg font-bold mb-4 text-[#5a4a42]">Gestion du Menu</h2>
                     <div id="menu-editor">
                         <!-- Menu editor loaded dynamically -->
                     </div>
@@ -123,13 +189,13 @@
 
         <!-- Table Number Modal -->
         <div id="table-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-white p-6 rounded-lg w-80">
-                <h3 class="text-lg font-bold mb-4">Numéro de Table</h3>
-                <input type="number" id="table-number" class="w-full p-2 border rounded mb-2" placeholder="Entrez le numéro de table" min="1">
+            <div class="bg-white p-6 rounded-lg w-80 food-item-card">
+                <h3 class="text-lg font-bold mb-4 text-[#5a4a42]">Numéro de Table</h3>
+                <input type="number" id="table-number" class="w-full p-2 border border-[#d4a762] rounded mb-2" placeholder="Entrez le numéro de table" min="1">
                 <p id="table-error" class="text-red-500 text-sm mb-3 hidden">Veuillez entrer un numéro de table valide</p>
                 <div class="flex justify-end space-x-2">
                     <button id="cancel-order" class="px-4 py-2 bg-gray-200 rounded">Annuler</button>
-                    <button id="confirm-order" class="px-4 py-2 bg-[#8B4513] text-white rounded">Confirmer</button>
+                    <button id="confirm-order" class="px-4 py-2 bg-[#5a4a42] text-white rounded">Confirmer</button>
                 </div>
             </div>
         </div>
@@ -161,27 +227,12 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
-            updateCurrentDate();
             loadMenu();
             setupEventListeners();
             
             // Add click event listener to restaurant name
-            document.querySelector('.restaurant-name').addEventListener('click', handleRestaurantNameClick);
+            document.querySelector('.main-title').addEventListener('click', handleRestaurantNameClick);
         });
-
-        // دالة لعرض التاريخ الحالي
-        function updateCurrentDate() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'Africa/Casablanca'
-            };
-            const dateString = now.toLocaleDateString('ar-MA', options);
-            document.getElementById('current-date').textContent = dateString;
-        }
 
         // Handle triple click on restaurant name
         function handleRestaurantNameClick() {
@@ -217,14 +268,14 @@
                 const section = document.createElement('div');
                 section.className = 'mb-8';
                 section.innerHTML = `
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">${category.name}</h2>
+                    <h2 class="menu-section-title text-xl font-bold mb-4 pb-2">${category.name}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="${category.id}-items">
                         ${menuData[category.id].map(item => `
-                            <div class="food-item bg-white p-4 rounded shadow">
-                                <h3 class="font-bold">${item.name}</h3>
+                            <div class="food-item bg-white p-4 rounded shadow food-item-card">
+                                <h3 class="font-bold text-[#5a4a42]">${item.name}</h3>
                                 <div class="flex justify-between items-center mt-2">
                                     <span class="text-[#8B4513] font-bold">${item.price} DH</span>
-                                    <button class="add-to-order px-3 py-1 bg-[#8B4513] text-white rounded" 
+                                    <button class="add-to-order px-3 py-1 text-white rounded" 
                                             data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
                                         Ajouter
                                     </button>
@@ -236,6 +287,9 @@
                 container.appendChild(section);
             });
         }
+
+        // باقي الدوال والوظائف تبقى كما هي بدون تغيير
+        // ... (يتبع نفس الدوال الموجودة في الكود السابق)
 
         // Load admin dashboard
         function loadAdminDashboard() {
@@ -253,10 +307,10 @@
             }
 
             container.innerHTML = orders.map(order => `
-                <div class="order bg-white p-4 rounded shadow" data-id="${order.id}">
+                <div class="order bg-white p-4 rounded shadow food-item-card" data-id="${order.id}">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="font-bold">Commande #${order.id}</h3>
+                            <h3 class="font-bold text-[#5a4a42]">Commande #${order.id}</h3>
                             <p class="text-sm">Table: ${order.tableNumber}</p>
                             <p class="text-sm">${new Date(order.time).toLocaleTimeString()}</p>
                         </div>
@@ -266,15 +320,15 @@
                     </div>
                     <div class="mt-2">
                         ${order.items.map(item => `
-                            <div class="flex justify-between text-sm py-1 border-b">
+                            <div class="flex justify-between text-sm py-1 border-b border-[#d4a762]">
                                 <span>${item.quantity}x ${item.name}</span>
                                 <span>${item.price * item.quantity} DH</span>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="flex justify-between items-center mt-2 pt-2 border-t">
-                        <span class="font-bold">Total: ${order.total} DH</span>
-                        <select class="order-status text-xs p-1 border rounded" data-order-id="${order.id}">
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-[#d4a762]">
+                        <span class="font-bold text-[#5a4a42]">Total: ${order.total} DH</span>
+                        <select class="order-status text-xs p-1 border border-[#d4a762] rounded" data-order-id="${order.id}">
                             <option value="new" ${order.status === 'new' ? 'selected' : ''}>Nouvelle</option>
                             <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>En préparation</option>
                             <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Prête</option>
@@ -291,18 +345,18 @@
             
             container.innerHTML = Object.entries(menuData).map(([category, items]) => `
                 <div class="mb-6">
-                    <h3 class="font-bold mb-2">${getCategoryName(category)}</h3>
+                    <h3 class="font-bold mb-2 text-[#5a4a42]">${getCategoryName(category)}</h3>
                     <div class="space-y-3" id="${category}-editor">
                         ${items.map(item => `
-                            <div class="menu-item bg-white p-3 rounded shadow flex justify-between items-center">
+                            <div class="menu-item bg-white p-3 rounded shadow food-item-card flex justify-between items-center">
                                 <div class="flex-1 mr-4">
                                     <input type="text" value="${item.name}" 
-                                           class="item-name w-full p-1 border rounded" 
+                                           class="item-name w-full p-1 border border-[#d4a762] rounded" 
                                            data-id="${item.id}" data-category="${category}">
                                 </div>
                                 <div class="w-20">
                                     <input type="number" value="${item.price}" 
-                                           class="item-price w-full p-1 border rounded" 
+                                           class="item-price w-full p-1 border border-[#d4a762] rounded" 
                                            data-id="${item.id}" data-category="${category}">
                                 </div>
                                 <button class="delete-item ml-2 px-2 py-1 bg-red-500 text-white rounded text-sm">
@@ -319,7 +373,7 @@
 
             // Add "Save Menu" button
             container.insertAdjacentHTML('beforeend', `
-                <button id="save-menu" class="mt-4 px-4 py-2 bg-[#8B4513] text-white rounded hover:bg-[#6B3410]">
+                <button id="save-menu" class="mt-4 px-4 py-2 bg-[#5a4a42] text-white rounded hover:bg-[#3a2a22]">
                     Enregistrer le Menu
                 </button>
             `);
@@ -367,9 +421,9 @@
             }
 
             container.innerHTML = currentOrder.map(item => `
-                <div class="flex justify-between py-1 border-b">
-                    <span>${item.quantity}x ${item.name}</span>
-                    <span>${item.price * item.quantity} DH</span>
+                <div class="flex justify-between py-1 border-b border-[#d4a762]">
+                    <span class="text-[#5a4a42]">${item.quantity}x ${item.name}</span>
+                    <span class="text-[#8B4513] font-bold">${item.price * item.quantity} DH</span>
                 </div>
             `).join('');
 
